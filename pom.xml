@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0	   http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>net.tqh.plugins</groupId>
+    <groupId>com.rectus29.plugins.uglifyjs</groupId>
     <artifactId>uglifyjs-maven-plugin</artifactId>
     <version>1.0</version>
     <name>uglifyjs-maven-plugin</name>
     <packaging>maven-plugin</packaging>
-    <url>https://github.com/tqh/uglifyjs-maven-plugin/</url>
+    <url>https://github.com/rectus29/uglifyjs-maven-plugin/</url>
     <description>
-        Maven plugin to run uglifyjs on a directory of javascript files. Based on the excellent
-        https://github.com/kawasima/handlebars-maven-plugin code.
+        Maven plugin to run uglifyjs on a directory of javascript files.
+        Based on the excellent https://github.com/tqh/uglifyjs-maven-plugin code.
     </description>
 
     <licenses>

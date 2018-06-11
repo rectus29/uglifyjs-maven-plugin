@@ -1,4 +1,4 @@
-package net.tqh.plugins;
+package com.rectus29.plugins.uglifyjs;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;

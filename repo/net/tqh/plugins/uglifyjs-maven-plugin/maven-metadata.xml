@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metadata>
-  <groupId>net.tqh.plugins</groupId>
+  <groupId>com.rectus29.plugins.uglifyjs</groupId>
   <artifactId>uglifyjs-maven-plugin</artifactId>
   <versioning>
     <latest>1.0</latest>
@@ -8,6 +8,6 @@
     <versions>
       <version>1.0</version>
     </versions>
-    <lastUpdated>20121203132947</lastUpdated>
+    <lastUpdated>20180611152150</lastUpdated>
   </versioning>
 </metadata>
