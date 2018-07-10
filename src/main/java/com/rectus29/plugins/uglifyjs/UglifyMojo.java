@@ -2,6 +2,7 @@ package com.rectus29.plugins.uglifyjs;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -59,27 +60,24 @@ public class UglifyMojo extends AbstractMojo {
         try {
             int count = uglify(getSourceFiles());
             getLog().info("Uglified " + count + " file(s).");
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new MojoExecutionException("Failure to precompile handlebars templates.", e);
         }
     }
 
-    protected int uglify(File[] jsFiles) throws IOException {
+    protected int uglify(File[] jsFiles) throws Exception {
         int count = 0;
-        OutputStreamWriter out = null;
         for (File jsFile : jsFiles) {
             final String jsFilePath = jsFile.getPath();
             getLog().info("Uglifying " + jsFilePath);
             try {
                 String output = new JavascriptContext("uglifyjs.js", "uglifyJavascript.js").executeCmdOnFile("uglifyJavascript", jsFile);
-                out = new OutputStreamWriter(new FileOutputStream(getOutputFile(jsFile), false), encoding);
-                out.write(output);
-            } catch (IOException e) {
+                FileUtils.writeStringToFile(getOutputFile(jsFile), output, false);
+            } catch (Exception e) {
                 getLog().error("Could not uglify " + jsFile.getPath() + ".", e);
                 throw e;
             } finally {
                 Context.exit();
-                IOUtils.closeQuietly(out);
             }
             count += 1;
         }
