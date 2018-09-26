@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.rectus29.plugins.uglifyjs</groupId>
     <artifactId>uglifyjs-maven-plugin</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <name>uglifyjs-maven-plugin</name>
     <packaging>maven-plugin</packaging>
     <url>https://github.com/rectus29/uglifyjs-maven-plugin/</url>
