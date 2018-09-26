@@ -2,7 +2,6 @@ package com.rectus29.plugins.uglifyjs;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -11,7 +10,9 @@ import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ScriptableObject;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 /**
  * UglifyJS uglify
@@ -71,7 +72,7 @@ public class UglifyMojo extends AbstractMojo {
             final String jsFilePath = jsFile.getPath();
             getLog().info("Uglifying " + jsFilePath);
             try {
-                String output = new JavascriptContext("uglifyjs.js", "uglifyJavascript.js").executeCmdOnFile("uglifyJavascript", jsFile);
+                String output = new JavascriptContext("uglifyes-3.3.4.js", "uglifyJavascript.js").executeCmdOnFile("uglifyJavascript", jsFile);
                 FileUtils.writeStringToFile(getOutputFile(jsFile), output, false);
             } catch (Exception e) {
                 getLog().error("Could not uglify " + jsFile.getPath() + ".", e);
@@ -126,7 +127,7 @@ public class UglifyMojo extends AbstractMojo {
             ClassLoader cl = getClass().getClassLoader();
             for (String script : scripts) {
                 InputStreamReader in = new InputStreamReader(cl.getResourceAsStream("script/" + script));
-                cx.evaluateReader(global, in, script, 1, null);
+                cx.evaluateReader(global, in, script, 0, null);
                 IOUtils.closeQuietly(in);
             }
         }
