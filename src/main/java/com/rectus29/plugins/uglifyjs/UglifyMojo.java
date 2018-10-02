@@ -87,7 +87,7 @@ public class UglifyMojo extends AbstractMojo {
 			getLog().info("Uglifying " + jsFilePath);
 			try {
 				String output = new JavascriptContext("uglifyes-3.3.4.js", "uglifyJavascript.js").executeCmdOnFile("uglifyJavascript", jsFile);
-				FileUtils.writeStringToFile(getOutputFile(jsFile), output, concatMode);
+				FileUtils.writeStringToFile(getOutputFile(jsFile), output, encoding, concatMode);
 			} catch (Exception e) {
 				getLog().error("Could not uglify " + jsFile.getPath() + ".", e);
 				throw e;
