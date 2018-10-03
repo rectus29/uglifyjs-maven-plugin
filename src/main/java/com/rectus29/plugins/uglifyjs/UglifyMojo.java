@@ -6,8 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.shared.model.fileset.FileSet;
-import org.apache.maven.shared.model.fileset.util.FileSetManager;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.ScriptableObject;
 
@@ -24,12 +22,18 @@ import java.io.InputStreamReader;
 public class UglifyMojo extends AbstractMojo {
 
 	/**
-	 * {@link org.apache.maven.shared.model.fileset.FileSet} containing JavaScript source files.
+	 * Array of path to JavaScript source files.
 	 *
 	 * @required
-	 * @parameter expression="${sources}"
+	 * @parameter expression="${filesPath}"
 	 */
-	protected FileSet sources;
+	protected String[] filesPath;
+
+	/**
+	 * @parameter expression="${sourceDir}"
+	 */
+	protected String sourceDir;
+
 	/**
 	 * @parameter expression="${outputDirectory}"
 	 */
@@ -52,6 +56,11 @@ public class UglifyMojo extends AbstractMojo {
 	 * @parameter expression="${encoding}" default-value="UTF-8"
 	 */
 	private String encoding = "UTF-8";
+
+	/**
+	 * @parameter expression="${parameters}" default-value="{}"
+	 */
+	private String parameters = "{}";
 
 	private boolean concatMode = false;
 
@@ -86,7 +95,8 @@ public class UglifyMojo extends AbstractMojo {
 			final String jsFilePath = jsFile.getPath();
 			getLog().info("Uglifying " + jsFilePath);
 			try {
-				String output = new JavascriptContext("uglifyes-3.3.4.js", "uglifyJavascript.js").executeCmdOnFile("uglifyJavascript", jsFile);
+				String output = new JavascriptContext("uglifyes-3.3.4.js", "uglifyJavascript.js")
+						.executeCmdOnFile("uglifyJavascript", jsFile);
 				FileUtils.writeStringToFile(getOutputFile(jsFile), output, encoding, concatMode);
 			} catch (Exception e) {
 				getLog().error("Could not uglify " + jsFile.getPath() + ".", e);
@@ -114,29 +124,26 @@ public class UglifyMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Returns {@link File directory} containing JavaScript source {@link File files}.
-	 *
-	 * @return {@link File Directory} containing JavaScript source {@link File files}
-	 */
-	private File getSourceDir() {
-		return new File(sources.getDirectory());
-	}
-
-	/**
 	 * Returns JavaScript source {@link File files}.
 	 *
 	 * @return Array of JavaScript source {@link File files}
 	 * @throws IOException
 	 */
 	private File[] getSourceFiles() throws IOException {
-		final FileSetManager fileSetManager = new FileSetManager();
-		final String[] includedFiles = fileSetManager.getIncludedFiles(sources);
 		final File sourceDir = getSourceDir();
-		final File[] sourceFiles = new File[includedFiles.length];
-		for (int i = 0; i < includedFiles.length; i++) {
-			sourceFiles[i] = new File(sourceDir, includedFiles[i]);
+		final File[] sourceFiles = new File[filesPath.length];
+		for (int i = 0; i < filesPath.length; i++) {
+			sourceFiles[i] = new File(sourceDir, filesPath[i]);
 		}
 		return sourceFiles;
+	}
+
+	private File getSourceDir() {
+		if(StringUtils.isNotBlank(this.sourceDir)){
+			return new File(this.sourceDir);
+		}else{
+			return null;
+		}
 	}
 
 	class JavascriptContext {
@@ -150,7 +157,24 @@ public class UglifyMojo extends AbstractMojo {
 				cx.evaluateReader(global, in, script, 0, null);
 				IOUtils.closeQuietly(in);
 			}
+			cx.evaluateString(global, "var options = " + option, "addOptions",1,  null);
 		}
+
+		String option = "{\n" +
+				"\t\tparse: {\n" +
+				"\t\t\t// parse options\n" +
+				"\t\t},\n" +
+				"\t\tcompress: {\n" +
+				"\t\t\t//compress options\n" +
+				"\t\t},\n" +
+				"\t\toutput: {\n" +
+				"\t\t\tast: true,\n" +
+				"\t\t\tcode: true\n" +
+				"\t\t},\n" +
+				"\t\tmangle: {\n" +
+				"\t\t\t//mangle options\n" +
+				"\t\t}\n" +
+				"\t}";
 
 		String executeCmdOnFile(String cmd, File file) throws IOException {
 			String data = FileUtils.readFileToString(file, "UTF-8");
